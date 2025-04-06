@@ -21,8 +21,6 @@
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>
 
-  <!-- Ensure ProjectReferences to the services are REMOVED -->
-
   <!-- Target 1: Publish Dependent Services EARLY using Exec -->
   <Target Name="PublishDependentServicesBeforeRazorC2" BeforeTargets="PrepareForPublish" Condition="'$(PublishSingleFile)' == 'true'">
     <PropertyGroup>
@@ -66,13 +64,6 @@
     <Message Text="-----------------------------------------------------" Importance="high" />
   </Target>
 
-  <!-- Target 2: Copy Published Service EXEs (Keep as is) -->
-  <Target Name="CopyDependentServiceEXEsAfterRazorC2" AfterTargets="Publish">
-      <!-- ... Content of Target 2 remains the same ... -->
-  </Target>
-
-    
-
   <!-- Target 2: Copy Published Service EXEs -->
    <Target Name="CopyDependentServiceEXEsAfterRazorC2" AfterTargets="Publish">
     <PropertyGroup>
@@ -84,11 +75,13 @@
       <HttpFileServerPublishDir>$(DependentProjectPublishPathBase)HTTPFileServerService\$(DependentProjectBinPath)</HttpFileServerPublishDir>
       <ImplantListenerPublishDir>$(DependentProjectPublishPathBase)ImplantListenerService\$(DependentProjectBinPath)</ImplantListenerPublishDir>
       <PayloadGenPublishDir>$(DependentProjectPublishPathBase)PayloadGenerationService\$(DependentProjectBinPath)</PayloadGenPublishDir>
+	  <PayloadGenProjectSourceDir>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\PayloadGenerationService'))</PayloadGenProjectSourceDir>
 
       <!-- Calculate Full Paths for better logging -->
       <HttpFileServerSourceFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)$(HttpFileServerPublishDir)'))</HttpFileServerSourceFullPath>
       <ImplantListenerSourceFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)$(ImplantListenerPublishDir)'))</ImplantListenerSourceFullPath>
       <PayloadGenSourceFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)$(PayloadGenPublishDir)'))</PayloadGenSourceFullPath>
+	  
       <DestinationFullPath>$([System.IO.Path]::GetFullPath('$(PublishDir)'))</DestinationFullPath>
     </PropertyGroup>
 
@@ -99,6 +92,7 @@
       <HttpFileServerPdbToCopy Include="$(HttpFileServerSourceFullPath)\HTTPFileServerService.pdb" Condition="Exists('$(HttpFileServerSourceFullPath)\HTTPFileServerService.pdb')" />
       <ImplantListenerPdbToCopy Include="$(ImplantListenerSourceFullPath)\ImplantListenerService.pdb" Condition="Exists('$(ImplantListenerSourceFullPath)\ImplantListenerService.pdb')" />
       <PayloadGenPdbToCopy Include="$(PayloadGenSourceFullPath)\PayloadGenerationService.pdb" Condition="Exists('$(PayloadGenSourceFullPath)\PayloadGenerationService.pdb')" />
+	  <PayloadTemplateFiles Include="$(PayloadGenProjectSourceDir)\PayloadTemplates\**\*.*" />
     </ItemGroup>
 
     <Message Text="-----------------------------------------------------" Importance="high" />
@@ -112,6 +106,8 @@
     <Message Text="HttpFileServer Exe Exists? $([System.IO.File]::Exists('%(HttpFileServerExeToCopy.Identity)'))" Importance="normal" />
     <Message Text="ImplantListener Exe Exists? $([System.IO.File]::Exists('%(ImplantListenerExeToCopy.Identity)'))" Importance="normal" />
     <Message Text="PayloadGen Exe Exists? $([System.IO.File]::Exists('%(PayloadGenExeToCopy.Identity)'))" Importance="normal" />
+	<Message Text="Payload Template Source Dir: $(PayloadGenProjectSourceDir)\PayloadTemplates\" Importance="normal" />
+    <Message Text="Found @(PayloadTemplateFiles->Count()) template files to copy." Importance="normal" />
     <Message Text="-----------------------------------------------------" Importance="high" />
 
     <!-- Perform the copy into RazorC2's final publish directory ($(PublishDir)) -->
@@ -121,6 +117,8 @@
     <Copy SourceFiles="@(HttpFileServerPdbToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'@(HttpFileServerPdbToCopy)' != ''"/>
     <Copy SourceFiles="@(ImplantListenerPdbToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'@(ImplantListenerPdbToCopy)' != ''"/>
     <Copy SourceFiles="@(PayloadGenPdbToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'@(PayloadGenPdbToCopy)' != ''"/>
+	<Copy SourceFiles="@(PayloadGenTemplateToCopy)" DestinationFolder="$(PublishDir)/PayloadTemplates" SkipUnchangedFiles="true" Condition="'@(PayloadGenTemplateToCopy)' != ''"/>
+	<Copy SourceFiles="@(PayloadTemplateFiles)" DestinationFolder="$(DestinationFullPath)PayloadTemplates\%(RecursiveDir)" SkipUnchangedFiles="true" />
 
     <Message Text="-----------------------------------------------------" Importance="high" />
     <Message Text="RazorC2: Finished copying dependent service EXEs." Importance="high" />
