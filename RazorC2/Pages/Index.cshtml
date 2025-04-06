@@ -1,0 +1,123 @@
+﻿@page
+@model RazorC2.Pages.IndexModel
+@{
+    ViewData["Title"] = "RazorC2 - Team Server";
+}
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <!-- Implants & Terminal Column -->
+        <div class="col-lg-8 col-md-7 mb-3">
+            <!-- Implant List Card (Remains mostly the same) -->
+            <div class="card bg-dark-alt mb-3 implant-list-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-users fa-fw me-2"></i>Implants (<span id="implant-count">0</span>)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover table-sm mb-0" id="implant-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><i class="fas fa-list-ol me-1"></i>ID</th>
+                                    <th scope="col"><i class="fas fa-desktop me-1"></i>Hostname</th>
+                                    <th scope="col"><i class="fas fa-network-wired me-1"></i>Remote IP</th>
+                                    <th scope="col"><i class="fas fa-id-card me-1"></i>Username</th>
+                                    <th scope="col"><i class="fas fa-microchip me-1"></i>Process Name</th>
+                                    <th scope="col"><i class="fas fa-cog me-1"></i>PID</th>
+                                    <th scope="col"><i class="far fa-clock me-1"></i>Last Seen</th>
+                                </tr>
+                            </thead>
+                            <tbody id="implant-table-body">
+                                <!-- JS will populate this -->
+                                <tr><td colspan="7" class="text-center p-5"><span class="placeholder-glow"><span class="placeholder col-6"></span></span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-end text-small">
+                    <i class="fas fa-sync fa-spin me-2 d-none" id="implants-loading-spinner"></i>
+                </div>
+            </div>
+
+            <!-- NEW: Interaction Terminal Card -->
+            <div class="card bg-dark-alt terminal-card" id="interaction-terminal">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-truncate">
+                        @* Added text-truncate for long IDs later *@
+                        <i class="fas fa-terminal fa-fw me-2"></i>Interaction: <span id="terminal-target-implant">None Selected</span>
+                    </h5>
+                    @* Maybe add controls here later? *@
+                </div>
+                @* --- ADD TAB BAR STRUCTURE --- *@
+                <ul class="nav nav-tabs interaction-tabs px-2 pt-1" id="interaction-tab-bar" role="tablist">
+                    @* Tabs will be added here by JS *@
+                    @* Example Initial State Message - will be removed by JS if tabs exist *@
+                    <li class="nav-item text-muted ms-2" id="no-tabs-message"><small>No active interactions...</small></li>
+                </ul>
+                @* --- END TAB BAR --- *@
+                @* --- THIS IS THE CONTAINER FOR THE PANES --- *@
+                <div class="tab-content interaction-panes-container" id="interaction-panes-container">
+                    @* JS adds individual .interaction-pane divs here (e.g., id="pane-IMPLANT_ID") *@
+                    @* REMOVED the old separate terminal-output div *@
+                    <div class="text-muted p-5 text-center" id="no-panes-message">Select an implant...</div>
+                </div>
+                @* --- END TAB CONTENT CONTAINER --- *@
+                <div class="card-footer terminal-input-area p-1">
+                    <!-- Command Input Form -->
+                    <form id="command-form" method="post" class="d-flex">
+                        @* Hidden input to store selected implant ID for the POST request *@
+                        <input type="hidden" id="selectedImplantId" name="SelectedImplantId">
+                        <span class="terminal-prompt ps-1 pe-1">></span>
+                        <input type="text" id="terminal-input-field" name="CommandText"
+                               class="form-control form-control-sm terminal-input flex-grow-1"
+                               placeholder="Enter command..." required autocomplete="off" disabled>
+                        <button type="submit" class="btn btn-primary btn-sm ms-1 terminal-submit-btn"
+                                id="queue-command-btn" disabled>
+                            <i class="fas fa-paper-plane fa-fw"></i>
+                        </button>
+                    </form>
+                    <div id="command-status" class="terminal-status text-small" role="alert">
+                        <!-- JS will update status here briefly -->
+                    </div>
+                </div>
+            </div>
+            <!-- END: Interaction Terminal Card -->
+
+        </div>
+
+        <!-- Server Log Column -->
+        <div class="col-lg-4 col-md-5 mb-3">
+            <!-- MOVED: Server Log Card -->
+            <div class="card bg-dark-alt log-box-card">
+                @* Added h-100 for potential height consistency *@
+                <div class="card-header h-100">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-list fa-fw me-2"></i>Server Log</h5>
+                </div>
+                <div class="card-body p-0">
+                    @* Ensure the log-box ID is unique if needed, but reusing is fine here *@
+                    <div id="log-box" class="log-box">
+                        <!-- JS will populate this -->
+                        <div class="text-center p-3"><span class="placeholder-glow"><span class="placeholder col-4"></span></span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- END: Server Log Card -->
+        </div>
+    </div>
+
+
+    <!-- Inside container-fluid div -->
+    <div id="implant-context-menu" class="context-menu">
+        <a class="context-menu-item" id="ctx-menu-task">
+            @* This ID triggers selectImplant *@
+            <i class="fas fa-terminal fa-fw"></i>Interact (Select) @* Renamed label slightly *@
+        </a>
+        <div class="context-menu-divider"></div>
+        <a class="context-menu-item" id="ctx-menu-kill">
+            <i class="fas fa-power-off fa-fw text-danger"></i>Kill Implant Process
+        </a>
+        <a class="context-menu-item" id="ctx-menu-remove">
+            <i class="fas fa-trash-alt fa-fw text-warning"></i>Remove From UI
+        </a>
+    </div>
+</div>

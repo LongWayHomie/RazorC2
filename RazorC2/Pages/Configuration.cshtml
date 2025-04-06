@@ -1,0 +1,230 @@
+﻿@page
+ @model RazorC2.Pages.ConfigurationModel
+@{
+    ViewData["Title"] = "Configuration";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@* Status Message Area *@
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert @(Model.StatusIsError == true ? "alert-danger" : "alert-success") alert-dismissible fade show" role="alert">
+        @Model.StatusMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+
+    @* --- Listener Section Card --- *@
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark-alt mb-4">
+            <div class="card-header">
+                <i class="fas fa-headphones-alt me-1"></i>Implant Listener Configuration
+            </div>
+            <div class="card-body">
+                @* Listener Status/Controls *@
+                <div class="mb-3">
+                    <strong>Listener Status:</strong>
+                    <span class="badge @(Model.IsListenerRunning ? "bg-success" : "bg-danger")">
+                        @(Model.IsListenerRunning ? "Running" : "Stopped")
+                    </span>
+
+                    @if (!Model.IsListenerRunning)
+                    {
+                        <form method="post" class="d-inline ms-2">
+                            <button type="submit" class="btn btn-sm btn-success" asp-page-handler="StartListener" formnovalidate>Start</button>
+                        </form>
+                    }
+                    @if (Model.IsListenerRunning)
+                    {
+                        <form method="post" class="d-inline ms-2">
+                            <button type="submit" class="btn btn-sm btn-danger" asp-page-handler="StopListener" formnovalidate>Stop</button>
+                        </form>
+                    }
+                </div>
+                <hr />
+                @* Content goes inside card-body *@
+                <form method="post" asp-page-handler="SaveListenerSettings">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    @* Listener IP *@
+                    <div class="mb-3">
+                        <label asp-for="ListenerIpAddress" class="form-label">Listen IP Address</label>
+                        <input asp-for="ListenerIpAddress" class="form-control" />
+                        <span asp-validation-for="ListenerIpAddress" class="text-danger"></span>
+                    </div>
+
+                    @* Listener Port *@
+                    <div class="mb-3">
+                        <label asp-for="ListenerPort" class="form-label">Listen Port</label>
+                        <input asp-for="ListenerPort" type="number" class="form-control" />
+                        <span asp-validation-for="ListenerPort" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Listener Settings</button>
+                </form>
+            </div> @* End card-body *@
+        </div> @* End card *@
+    </div> @* End Listener col-md-6 *@
+
+
+    @* --- HTTP File Server & File Manager Column --- *@
+    <div class="col-md-6">
+
+        @* --- File Server Configuration Card --- *@
+        <div class="card bg-dark-alt mb-4">
+            <div class="card-header">
+                <i class="fas fa-server me-1"></i>HTTP File Server Configuration
+            </div>
+            <div class="card-body">
+                @* Status Display and Start/Stop Buttons *@
+                <div class="mb-3">
+                    <strong>File Server Status:</strong>
+                    <span class="badge @(Model.IsFileServerRunning ? "bg-success" : "bg-danger")">
+                        @(Model.IsFileServerRunning ? "Running" : "Stopped")
+                    </span>
+                    <form method="post" class="d-inline">
+                        @if (!Model.IsFileServerRunning)
+                        {
+                            <button type="submit" class="btn btn-sm btn-success ms-2" asp-page-handler="StartFileServer" formnovalidate>Start</button>
+                        }
+                        @if (Model.IsFileServerRunning)
+                        {
+                            <button type="submit" class="btn btn-sm btn-danger ms-2" asp-page-handler="StopFileServer" formnovalidate>Stop</button>
+                        }
+                    </form>
+                </div>
+
+                @* File Server IP/Port Settings Form *@
+                <form method="post" asp-page-handler="SaveFileServerSettings">
+                    <hr />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="FileServerIpAddress" class="form-label">File Server Listen IP Address</label>
+                        <input asp-for="FileServerIpAddress" class="form-control" />
+                        <span asp-validation-for="FileServerIpAddress" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="FileServerPort" class="form-label">File Server Listen Port</label>
+                        <input asp-for="FileServerPort" type="number" class="form-control" />
+                        <span asp-validation-for="FileServerPort" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save File Server Settings</button>
+                    @if (Model.IsFileServerRunning)
+                    {
+                        @* Using model properties directly if FileServerUrl property still exists in model *@
+                        <small class="ms-2 text-muted">(Currently Serving: <a href="http://@Model.FileServerIpAddress:@Model.FileServerPort/" target="_blank" rel="noopener noreferrer">http://@Model.FileServerIpAddress:@Model.FileServerPort/</a>)</small>
+                    }
+                </form>
+            </div> @* End card-body *@
+        </div> @* End card *@
+
+
+        @* --- File Manager Card --- *@
+        <div class="card bg-dark-alt file-manager">
+            <div class="card-header">
+                <i class="fas fa-folder-open me-1"></i>
+                File Manager (<code class="ms-1">/@Model.CurrentPathDisplay</code>)
+            </div>
+            <div class="card-body p-2">
+
+                @* Current Path Display & Up Navigation *@
+                <div class="file-manager-nav mb-2 d-flex align-items-center">
+                    @if (Model.ParentRelativePath != null || !string.IsNullOrEmpty(Model.CurrentRelativePath))
+                    {
+                        <a asp-page="/Configuration" asp-route-CurrentRelativePath="@Model.ParentRelativePath" class="btn btn-sm btn-outline-secondary me-2" title="Go Up">
+                            <i class="fas fa-arrow-up"></i> Up
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="btn btn-sm btn-outline-secondary me-2 disabled"><i class="fas fa-arrow-up"></i> Up</span>
+                    }
+                    <code class="flex-grow-1 text-truncate" title="/@Model.CurrentPathDisplay">/@Model.CurrentPathDisplay</code>
+                </div>
+
+                @* File/Directory Listing Table *@
+                <div class="table-responsive file-manager-list mb-3">
+                    <table class="table table-dark table-hover table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 20px;"></th> @* Icon *@
+                                <th>Name</th>
+                                <th class="text-end">Size</th>
+                                <th class="text-end">Modified</th>
+                                <th class="text-end" style="width: 100px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.FileManagerItems.Any())
+                            {
+                                <tr><td colspan="5" class="text-center text-muted py-3"><em>Directory is empty.</em></td></tr>
+                            }
+                            @foreach (var item in Model.FileManagerItems)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        @if (item.IsDirectory)
+                                        {
+                                            <i class="fas fa-folder text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-file text-info"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.IsDirectory)
+                                        {
+                                            <a asp-page="/Configuration" asp-route-CurrentRelativePath="@item.RelativePath">@item.Name</a>
+                                        }
+                                        else
+                                        {
+                                            @item.Name
+                                        }
+                                    </td>
+                                    <td class="text-end">@item.SizeDisplay</td>
+                                    <td class="text-end">@item.LastModified.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="text-end">
+                                        @if (!item.IsDirectory)
+                                        {
+                                            @* Delete Form *@
+                                            <form method="post" asp-page-handler="DeleteFile" class="d-inline">
+                                                <input type="hidden" name="relativeFilePath" value="@item.RelativePath" />
+                                                <input type="hidden" name="currentRelativePath" value="@Model.CurrentRelativePath" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"
+                                                        onclick="return confirm('Are you sure you want to delete file: @item.Name.Replace("'", "\\'")?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            @* Download Link *@
+                                            <a asp-page-handler="DownloadFile" asp-route-relativeFilePath="@item.RelativePath" class="btn btn-sm btn-outline-primary ms-1" title="Download">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @* Upload Form within File Manager *@
+                <div class="file-manager-upload">
+                    <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile">
+                        <input type="hidden" name="CurrentRelativePath" value="@Model.CurrentRelativePath" />
+                        <label asp-for="UploadedFile" class="form-label form-label-sm">Upload to <strong>/@Model.CurrentPathDisplay</strong>:</label>
+                        <div class="input-group input-group-sm">
+                            <input asp-for="UploadedFile" type="file" class="form-control">
+                            <button type="submit" class="btn btn-secondary">Upload File</button>
+                        </div>
+                        <span asp-validation-for="UploadedFile" class="text-danger text-small"></span>
+                    </form>
+                </div>
+
+            </div> @* End card-body *@
+        </div> @* End file-manager card *@
+    </div> @* End col-md-6 *@
+</div> @* End row *@

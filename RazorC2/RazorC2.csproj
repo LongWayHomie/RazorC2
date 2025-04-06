@@ -1,0 +1,130 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <PublishDebugSymbol>false</PublishDebugSymbol>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\img\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
+  <!-- Ensure ProjectReferences to the services are REMOVED -->
+
+  <!-- Target 1: Publish Dependent Services EARLY using Exec -->
+  <Target Name="PublishDependentServicesBeforeRazorC2" BeforeTargets="PrepareForPublish" Condition="'$(PublishSingleFile)' == 'true'">
+    <PropertyGroup>
+       <_ResolvedRID Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</_ResolvedRID>
+       <_ResolvedRID Condition="'$(TargetRuntimeIdentifier)' != ''">$(TargetRuntimeIdentifier)</_ResolvedRID>
+       <!-- Construct base command arguments -->
+       <DotnetPublishArgs>-c $(Configuration) -r $(_ResolvedRID) --self-contained false -p:PublishSingleFile=true -p:PublishDebugSymbol=false /nologo /v:minimal</DotnetPublishArgs>
+    </PropertyGroup>
+    <Message Text="-----------------------------------------------------" Importance="high" />
+    <Message Text="Target: PublishDependentServicesBeforeRazorC2 (Using Exec)" Importance="high" />
+    <Message Text="Using Configuration: $(Configuration)" Importance="normal" />
+    <Message Text="Using Resolved RID: $(_ResolvedRID)" Importance="normal" />
+    <Message Text="Condition Met: '$(PublishSingleFile)' == 'true'" Importance="normal" />
+    <Message Text="Base Args for dotnet publish: $(DotnetPublishArgs)" Importance="normal" />
+    <Message Text="-----------------------------------------------------" Importance="high" />
+
+    <!-- Publish Dependencies using Exec -->
+     <Message Text="Executing: dotnet publish ..\HTTPFileServerService\HTTPFileServerService.csproj $(DotnetPublishArgs)" Importance="high" />
+     <Exec Command="dotnet publish ..\HTTPFileServerService\HTTPFileServerService.csproj $(DotnetPublishArgs)" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+
+     <Message Text="Executing: dotnet publish ..\ImplantListenerService\ImplantListenerService.csproj $(DotnetPublishArgs)" Importance="high" />
+     <Exec Command="dotnet publish ..\ImplantListenerService\ImplantListenerService.csproj $(DotnetPublishArgs)" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+
+     <Message Text="Executing: dotnet publish ..\PayloadGenerationService\PayloadGenerationService.csproj $(DotnetPublishArgs)" Importance="high" />
+     <Exec Command="dotnet publish ..\PayloadGenerationService\PayloadGenerationService.csproj $(DotnetPublishArgs)" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+
+    <!-- Add Checks Immediately After Exec (Optional but recommended for debugging) -->
+    <PropertyGroup>
+       <ExpectedHttpFsExePath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\HTTPFileServerService\bin\$(Configuration)\net8.0\$(_ResolvedRID)\publish\HTTPFileServerService.exe'))</ExpectedHttpFsExePath>
+       <ExpectedListenerExePath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\ImplantListenerService\bin\$(Configuration)\net8.0\$(_ResolvedRID)\publish\ImplantListenerService.exe'))</ExpectedListenerExePath>
+       <ExpectedPayloadGenExePath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\PayloadGenerationService\bin\$(Configuration)\net8.0\$(_ResolvedRID)\publish\PayloadGenerationService.exe'))</ExpectedPayloadGenExePath>
+    </PropertyGroup>
+    <Message Text=">>> IMMEDIATE CHECK after HTTPFS Exec. Path: $(ExpectedHttpFsExePath). Exists? $([System.IO.File]::Exists('$(ExpectedHttpFsExePath)'))" Importance="high" />
+    <Message Text=">>> IMMEDIATE CHECK after Listener Exec. Path: $(ExpectedListenerExePath). Exists? $([System.IO.File]::Exists('$(ExpectedListenerExePath)'))" Importance="high" />
+    <Message Text=">>> IMMEDIATE CHECK after PayloadGen Exec. Path: $(ExpectedPayloadGenExePath). Exists? $([System.IO.File]::Exists('$(ExpectedPayloadGenExePath)'))" Importance="high" />
+    <Error Condition="!$([System.IO.File]::Exists('$(ExpectedHttpFsExePath)')) Or !$([System.IO.File]::Exists('$(ExpectedListenerExePath)')) Or !$([System.IO.File]::Exists('$(ExpectedPayloadGenExePath)'))" Text="One or more dependent EXEs were NOT found immediately after their publish Exec call in Target 1!" />
+
+
+    <Message Text="-----------------------------------------------------" Importance="high" />
+    <Message Text="RazorC2: Finished publishing dependent services via Exec." Importance="high" />
+    <Message Text="-----------------------------------------------------" Importance="high" />
+  </Target>
+
+  <!-- Target 2: Copy Published Service EXEs (Keep as is) -->
+  <Target Name="CopyDependentServiceEXEsAfterRazorC2" AfterTargets="Publish">
+      <!-- ... Content of Target 2 remains the same ... -->
+  </Target>
+
+    
+
+  <!-- Target 2: Copy Published Service EXEs -->
+   <Target Name="CopyDependentServiceEXEsAfterRazorC2" AfterTargets="Publish">
+    <PropertyGroup>
+      <_ResolvedRID Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</_ResolvedRID>
+      <_ResolvedRID Condition="'$(TargetRuntimeIdentifier)' != ''">$(TargetRuntimeIdentifier)</_ResolvedRID>
+      <DependentProjectPublishPathBase>..\</DependentProjectPublishPathBase>
+      <DependentProjectBinPath>bin\$(Configuration)\net8.0\$(_ResolvedRID)\publish</DependentProjectBinPath> <!-- Adjust net8.0 if needed -->
+
+      <HttpFileServerPublishDir>$(DependentProjectPublishPathBase)HTTPFileServerService\$(DependentProjectBinPath)</HttpFileServerPublishDir>
+      <ImplantListenerPublishDir>$(DependentProjectPublishPathBase)ImplantListenerService\$(DependentProjectBinPath)</ImplantListenerPublishDir>
+      <PayloadGenPublishDir>$(DependentProjectPublishPathBase)PayloadGenerationService\$(DependentProjectBinPath)</PayloadGenPublishDir>
+
+      <!-- Calculate Full Paths for better logging -->
+      <HttpFileServerSourceFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)$(HttpFileServerPublishDir)'))</HttpFileServerSourceFullPath>
+      <ImplantListenerSourceFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)$(ImplantListenerPublishDir)'))</ImplantListenerSourceFullPath>
+      <PayloadGenSourceFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)$(PayloadGenPublishDir)'))</PayloadGenSourceFullPath>
+      <DestinationFullPath>$([System.IO.Path]::GetFullPath('$(PublishDir)'))</DestinationFullPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <HttpFileServerExeToCopy Include="$(HttpFileServerSourceFullPath)\HTTPFileServerService.exe" />
+      <ImplantListenerExeToCopy Include="$(ImplantListenerSourceFullPath)\ImplantListenerService.exe" />
+      <PayloadGenExeToCopy Include="$(PayloadGenSourceFullPath)\PayloadGenerationService.exe" />
+      <HttpFileServerPdbToCopy Include="$(HttpFileServerSourceFullPath)\HTTPFileServerService.pdb" Condition="Exists('$(HttpFileServerSourceFullPath)\HTTPFileServerService.pdb')" />
+      <ImplantListenerPdbToCopy Include="$(ImplantListenerSourceFullPath)\ImplantListenerService.pdb" Condition="Exists('$(ImplantListenerSourceFullPath)\ImplantListenerService.pdb')" />
+      <PayloadGenPdbToCopy Include="$(PayloadGenSourceFullPath)\PayloadGenerationService.pdb" Condition="Exists('$(PayloadGenSourceFullPath)\PayloadGenerationService.pdb')" />
+    </ItemGroup>
+
+    <Message Text="-----------------------------------------------------" Importance="high" />
+    <Message Text="Target: CopyDependentServiceEXEsAfterRazorC2" Importance="high" />
+    <Message Text="Resolved RID for Path Calc: $(_ResolvedRID)" Importance="normal" />
+    <Message Text="Expecting HTTP FS Files in: $(HttpFileServerSourceFullPath)" Importance="normal" />
+    <Message Text="Expecting Listener Files in: $(ImplantListenerSourceFullPath)" Importance="normal" />
+    <Message Text="Expecting PayloadGen Files in: $(PayloadGenSourceFullPath)" Importance="normal" />
+    <Message Text="Destination PublishDir: $(PublishDir)" Importance="normal" />
+    <Message Text="Destination Full Path: $(DestinationFullPath)" Importance="normal" />
+    <Message Text="HttpFileServer Exe Exists? $([System.IO.File]::Exists('%(HttpFileServerExeToCopy.Identity)'))" Importance="normal" />
+    <Message Text="ImplantListener Exe Exists? $([System.IO.File]::Exists('%(ImplantListenerExeToCopy.Identity)'))" Importance="normal" />
+    <Message Text="PayloadGen Exe Exists? $([System.IO.File]::Exists('%(PayloadGenExeToCopy.Identity)'))" Importance="normal" />
+    <Message Text="-----------------------------------------------------" Importance="high" />
+
+    <!-- Perform the copy into RazorC2's final publish directory ($(PublishDir)) -->
+    <Copy SourceFiles="@(HttpFileServerExeToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ImplantListenerExeToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PayloadGenExeToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(HttpFileServerPdbToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'@(HttpFileServerPdbToCopy)' != ''"/>
+    <Copy SourceFiles="@(ImplantListenerPdbToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'@(ImplantListenerPdbToCopy)' != ''"/>
+    <Copy SourceFiles="@(PayloadGenPdbToCopy)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" Condition="'@(PayloadGenPdbToCopy)' != ''"/>
+
+    <Message Text="-----------------------------------------------------" Importance="high" />
+    <Message Text="RazorC2: Finished copying dependent service EXEs." Importance="high" />
+    <Message Text="-----------------------------------------------------" Importance="high" />
+   </Target>
+
+</Project>

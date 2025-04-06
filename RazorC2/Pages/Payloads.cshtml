@@ -1,0 +1,62 @@
+﻿@page
+@model RazorC2.Pages.PayloadsModel
+@{
+    ViewData["Title"] = "Payload Generation";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>Configure and generate implant payloads.</p>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+            <div class="alert @(Model.StatusIsError == true ? "alert-danger" : "alert-success") alert-dismissible fade show" role="alert">
+        @Model.StatusMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+}
+
+ <div class="row">
+     <div class="col-md-10 col-lg-8"> 
+         <div class="card bg-dark-alt">
+             <div class="card-header">
+                 <i class="fas fa-cogs me-1"></i> Generate Payload
+             </div>
+             <div class="card-body">
+                  <p><small>Generate implant targeting .NET Framework 4.8 (requires it on target).</small></p>
+                 <form method="post">
+                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                     <div class="mb-3">
+                         <label asp-for="ListenerIp" class="form-label">Listener IP Address</label>
+                         <input asp-for="ListenerIp" class="form-control" placeholder="e.g., 10.10.11.100" />
+                         <span asp-validation-for="ListenerIp" class="text-danger"></span>
+                     </div>
+                     <div class="mb-3">
+                         <label asp-for="ListenerPort" class="form-label">Listener Port</label>
+                         <input asp-for="ListenerPort" type="number" class="form-control" placeholder="e.g., 80" />
+                         <span asp-validation-for="ListenerPort" class="text-danger"></span>
+                     </div>
+                     <div class="mb-3">
+                         <label asp-for="DefaultSleepSeconds" class="form-label">Default Sleep (seconds)</label>
+                         <input asp-for="DefaultSleepSeconds" type="number" class="form-control" min="1" placeholder="e.g., 10" />
+                         <span asp-validation-for="DefaultSleepSeconds" class="text-danger"></span>
+                     </div>
+                     <div class="mb-3">
+                          <label asp-for="OutputType" class="form-label">Output Format</label>
+                          <select asp-for="OutputType" class="form-select">
+                              <option value="exe">Executable (.exe)</option>
+                          </select>
+                          <span asp-validation-for="OutputType" class="text-danger"></span>
+                     </div>
+                     <button type="submit" class="btn btn-primary w-100">
+                         <i class="fas fa-download me-1"></i> Generate
+                     </button>
+                 </form>
+             </div> 
+         </div> 
+     </div>
+ </div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

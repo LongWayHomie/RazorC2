@@ -1,0 +1,1023 @@
+/* wwwroot/css/site.css */
+:root {
+    --bs-dark-rgb: 45, 45, 48; /* Match our dark-gray */
+    --dark-gray: #2d2d30;
+    --dark-alt: #252527; /* Slightly darker for cards/alt backgrounds */
+    --medium-gray: #3f3f46;
+    --light-gray: #a0a0a0;
+    --very-light-gray: #cccccc;
+    --text-color: var(--very-light-gray);
+    --accent-color: #0d6efd; /* Standard Bootstrap blue */
+    --accent-hover: #0b5ed7;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --stale-color: #6c757d; /* Bootstrap muted color */
+    /* Override Bootstrap defaults */
+    --bs-body-color: var(--text-color);
+    --bs-body-bg: var(--dark-gray);
+    --bs-secondary-color: var(--light-gray);
+    --bs-emphasis-color: var(--very-light-gray);
+    --bs-border-color: var(--medium-gray);
+    --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
+}
+
+html {
+    height: 100%; /* Ensure HTML takes full height */
+    font-size: 14px; /* Keep your existing font size rules */
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+
+body {
+    display: flex; /* Make body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    min-height: 100vh; /* Ensure body is AT LEAST the viewport height */
+    padding-top: 0; /* Remove previous body padding if set, navbar margin handles top space */
+    padding-bottom: 0; /* Remove previous body padding */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Keep existing */
+    background-color: var(--dark-gray); /* Ensure dark background is on body */
+    color: var(--text-color); /* Ensure default text color is set on body */
+}
+
+header {
+    flex-shrink: 0;
+}
+
+/* Target the main content area (the <main> tag) */
+main[role="main"] {
+    flex-grow: 1; /* Allow the main content area to expand and fill available space */
+    /* The pb-3 class adds bottom padding, which is good */
+}
+
+/* --- Terminal --- */
+/* --- Interaction Terminal Styling --- */
+.terminal-card .card-body#terminal-output { /* Target the specific element */
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.9em;
+    background-color: #1e1e1e;
+    color: var(--very-light-gray);
+    /* *** CORE SCROLLING RULES *** */
+    height: 450px; /* FIXED height - Adjust as needed */
+    overflow-y: auto !important; /* Force scrollbar */
+    /* **************************** */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 8px; /* Apply padding directly */
+    margin: 0; /* Reset margin */
+    border: none; /* Ensure no borders interfere */
+}
+
+/* Ensure the main terminal card uses flex */
+.terminal-card {
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* ADJUST */
+    overflow: hidden;
+}
+
+.terminal-input-area {
+    flex-shrink: 0;
+    /* Keep other footer styles */
+}
+
+    .terminal-input-area .d-flex {
+        align-items: center; /* Align items vertically */
+    }
+
+.terminal-prompt {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.9em;
+    color: var(--accent-color);
+    user-select: none; /* Prevent selecting the ">" */
+}
+
+.terminal-input {
+    background-color: transparent; /* Make input background transparent */
+    border: none; /* Remove default border */
+    color: #ffffff; /* Bright text for input */
+    box-shadow: none !important; /* Remove focus shadow */
+    outline: none !important; /* Remove focus outline */
+    padding-left: 5px; /* Add some padding */
+    caret-color: var(--very-light-gray); /* Cursor color */
+    flex-grow: 1; /* Allow input to take available space */
+}
+
+    .terminal-input::placeholder {
+        color: var(--light-gray);
+        opacity: 0.6;
+    }
+
+    .terminal-input:disabled {
+        background-color: transparent; /* Keep bg transparent when disabled */
+        cursor: not-allowed;
+    }
+
+.terminal-submit-btn {
+    padding: 0.1rem 0.5rem; /* Smaller padding for tight fit */
+    font-size: 0.8rem;
+    line-height: 1.2; /* Adjust line height */
+}
+
+    .terminal-submit-btn i {
+        vertical-align: middle;
+    }
+
+.terminal-status {
+    padding-left: 5px;
+    padding-top: 2px;
+    min-height: 1em; /* Reserve space to prevent layout jump */
+    color: var(--light-gray);
+}
+
+    .terminal-status.success {
+        color: var(--success-color);
+    }
+
+    .terminal-status.error {
+        color: var(--danger-color);
+    }
+
+
+/* --- Card Styling --- */
+.card.h-100 .log-box {
+    height: calc(100% - 60px); /* Example: Subtract header/footer height */
+    /* Or make log box height flexible instead of fixed */
+    /* height: auto; max-height: 600px; */
+}
+
+.card-header {
+    background-color: var(--medium-gray);
+    color: var(--very-light-gray);
+    border-bottom: 1px solid var(--dark-gray);
+    padding: 0.6rem 1rem;
+}
+
+    .card-header h5 {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+.card.bg-dark-alt {
+    background-color: var(--dark-alt);
+}
+
+.card-footer {
+    background-color: var(--dark-alt);
+    border-top: 1px solid var(--medium-gray);
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem; /* Smaller text in footer */
+    color: var(--light-gray) !important; /* Override text-muted default if needed */
+}
+
+    .card-footer .fa-spin {
+        color: var(--accent-color);
+    }
+/* Color the spinner */
+
+
+/* === Navbar Logo Styling === */
+.navbar-logo {
+    max-height: 25px; /* Adjust this value to fit your logo and navbar height */
+    height: auto; /* Maintain aspect ratio based on max-height */
+    width: auto; /* Maintain aspect ratio */
+    vertical-align: middle; /* Helps align the logo vertically if needed */
+}
+
+/* Optional: Adjust navbar padding if the logo makes it feel too tight */
+/*
+.navbar-brand {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+*/
+
+/* --- Table Styling --- */
+.table {
+    margin-bottom: 0;
+    color: var(--very-light-gray); /* <<< CHANGE default table text to BRIGHTER */
+    border-color: var(--medium-gray);
+    font-size: 0.9rem;
+}
+
+
+    .table thead th {
+        background-color: var(--medium-gray);
+        color: var(--very-light-gray);
+        border-bottom: 2px solid var(--dark-gray); /* Thicker bottom border on header */
+        border-top: none;
+        font-weight: 500;
+        white-space: nowrap; /* Prevent headers wrapping */
+    }
+
+    .table tbody tr {
+        background-color: transparent; /* Base background */
+        color: inherit; /* Inherit from .table */
+        transition: background-color 0.15s ease-in-out;
+    }
+
+        .table tbody tr > td {
+            background-color: inherit; /* Inherit background from TR */
+            vertical-align: middle; /* Keep vertical align */
+            padding: 0.4rem 0.6rem; /* Keep padding */
+        }
+
+/* --- HOVER STATES --- */
+
+/* 3. Hover for ACTIVE (NOT stale) rows */
+.table-hover > tbody > tr:not(.implant-stale):hover > td {
+    background-color: rgba(255, 255, 255, 0.08) !important; /* Standard light hover background */
+    color: var(--very-light-gray) !important; /* Keep text bright on hover */
+}
+
+/* 4. Hover for STALE rows (Keep stale appearance) */
+.table-hover > tbody > tr.implant-stale:hover > td {
+    background-color: #38383e !important; /* Keep STALE background */
+    color: var(--stale-color) !important; /* Keep STALE text color */
+}
+
+/* --- ACTIVE (Selected) STATES --- */
+
+/* Default active (non-stale selected row) */
+.table-active, /* Keep the standard blue selection style */
+.table-active > th,
+.table-active > td {
+    background-color: var(--accent-color) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-hover) !important;
+}
+
+/* Ensure the ACTIVE STALE row uses the stale background/color, not the accent color */
+tr.table-active.implant-stale > td { /* Target TD elements within the active stale TR */
+    background-color: #38383e !important; /* Use STALE background */
+    color: var(--stale-color) !important; /* Use STALE text color */
+    /* border-color: var(--medium-gray) !important; */ /* Remove distinct border for active stale */
+}
+
+/* 5. ACTIVE (Selected) NON-STALE row */
+tr.table-active:not(.implant-stale) > td {
+    background-color: var(--accent-color) !important; /* Blue background */
+    color: #ffffff !important; /* White text */
+    border-color: var(--accent-hover) !important; /* Affects border if table has borders */
+}
+/* Icon color for active non-stale */
+tr.table-active:not(.implant-stale) .implant-id i {
+    color: #ffffff !important; /* White icon */
+}
+
+
+/* 6. ACTIVE (Selected) STALE row */
+tr.table-active.implant-stale > td {
+    background-color: #38383e !important; /* Keep STALE background */
+    color: var(--stale-color) !important; /* Keep STALE text color */
+    /* border-color: var(--medium-gray) !important; */ /* Remove border override */
+}
+/* Icon color for active stale */
+tr.table-active.implant-stale .implant-id i {
+    color: var(--stale-color) !important; /* Keep STALE icon color */
+}
+
+
+/* Optional: Adjust button colors if needed inside the blue active rows */
+.table-active:not(.implant-stale) .btn-primary { /* Only target buttons in NON-STALE active rows */
+    background-color: #ffffff;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+    .table-active:not(.implant-stale) .btn-primary:hover {
+        background-color: #eee;
+    }
+
+/* Adjust button colors if needed for active rows (standard active row) */
+.table-active .btn-primary {
+    background-color: #ffffff;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+    .table-active .btn-primary:hover {
+        background-color: #eee;
+    }
+
+/* 1. Style for STALE rows (targeting cells) */
+tr.implant-stale > td {
+    background-color: #38383e !important; /* Stale background */
+    color: var(--stale-color) !important; /* Use the original intended STALE text color */
+    font-style: normal !important;
+}
+
+/* 2. Style for Icons within STALE rows */
+.implant-stale .implant-id i {
+    color: var(--stale-color) !important; /* Match STALE text color */
+}
+
+/* Bootstrap's active class for selected row */
+.table-active, .table-active > th, .table-active > td {
+    background-color: var(--accent-color) !important;
+    color: #ffffff !important; /* Ensure contrast */
+    border-color: var(--accent-hover) !important;
+}
+
+    .table-active .btn-primary { /* Adjust button inside active row */
+        background-color: #ffffff;
+        color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+        .table-active .btn-primary:hover {
+            background-color: #eee;
+        }
+
+
+.implant-id {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.85em;
+}
+
+    .implant-id i {
+        color: var(--accent-color); /* Color the main icon */
+    }
+
+.implant-stale .implant-id i {
+    color: var(--stale-color); /* Muted color for stale icon */
+}
+
+td, th {
+    vertical-align: middle; /* Align vertically */
+    padding: 0.4rem 0.6rem; /* Adjust padding */
+}
+
+
+/* --- Form Styling --- */
+label.form-label-sm {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+    color: var(--light-gray);
+}
+
+.form-control, .form-select {
+    background-color: var(--medium-gray);
+    color: var(--very-light-gray);
+    border: 1px solid var(--light-gray);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: var(--medium-gray);
+        color: var(--very-light-gray);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+
+    .form-control::placeholder {
+        color: #7a7a7a;
+        opacity: 0.8;
+    }
+
+    .form-control:read-only {
+        background-color: #333336; /* Slightly different background */
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+.form-control-sm {
+    font-size: 0.875rem; /* Consistent small size */
+    padding: 0.25rem 0.5rem;
+}
+
+.input-group-sm > .form-control, .input-group-sm > .input-group-text, .input-group-sm > .btn {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-sm {
+    font-size: 0.8rem; /* Slightly smaller buttons */
+    padding: 0.25rem 0.6rem;
+}
+
+/* Alert message styling */
+.alert-sm {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0; /* Reset margin */
+}
+
+/* The scrollable log container */
+.log-box {
+    background-color: #1e1e1e;
+    border: none;
+    padding: 8px;
+    box-sizing: border-box; /* Include padding in height calculation */
+    width: 100%; /* Fill horizontal space */
+    /* *** CORE SCROLLING RULES: FIXED HEIGHT *** */
+    height: 600px; /* <-- *** ADJUST THIS PIXEL VALUE *** */
+    overflow-x: hidden !important;
+    overflow-y: scroll !important; /* Always show scrollbar */
+    /* ****************************************** */
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.85em;
+    color: var(--very-light-gray);
+}
+
+
+.log-box-card {
+    /* Remove flexbox properties from the card itself */
+    /* We'll rely on the fixed height of the log-box below */
+}
+
+
+    /* The direct parent of #log-box (.card-body) */
+    .log-box-card .card-body {
+        padding: 0 !important; /* Keep padding removed */
+        margin: 0 !important;
+        overflow: hidden !important; /* ** ESSENTIAL: Prevent parent scroll/growth ** */
+        /* Do NOT set height or flex here */
+    }
+
+/* Style individual log entries */
+.log-box div {
+    margin-bottom: 3px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.log-timestamp {
+    color: var(--light-gray);
+    margin-right: 8px;
+}
+
+/* --- Utilities --- */
+.text-small {
+    font-size: 0.8rem;
+}
+
+.text-muted {
+    color: var(--stale-color) !important;
+}
+/* Ensure override */
+.placeholder {
+    background-color: var(--medium-gray);
+}
+
+/* --- Scrollbar Styling (Optional, Webkit only) --- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-alt);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--medium-gray);
+    border-radius: 4px;
+    border: 2px solid var(--dark-alt);
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--light-gray);
+    }
+
+/* --- Footer Styling --- */
+/* --- Footer Styling --- */
+.app-footer {
+    height: 45px; /* Keep your fixed height */
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 0;
+    border-top: 1px solid #dee2e6;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+    /* --- ADD/ADJUST line-height to match height --- */
+    line-height: 45px; /* Match the height property */
+}
+
+    /* Ensure the container inside fills the height and handles padding */
+    .app-footer .container-fluid {
+        height: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        /* d-flex, justify-content-between, align-items-center from HTML */
+    }
+
+/* Style for text elements within the footer */
+.footer-text {
+    font-size: 0.85rem; /* Keep desired font size */
+    color: inherit;
+    /* Remove vertical-align if previously added, let line-height handle it */
+    /* vertical-align: middle; */ /* REMOVE IF PRESENT */
+}
+
+/* Override SignalR status colors for light background if needed */
+#connection-status-span .text-success {
+    /* color: #146c43 !important; */ /* Darker green (optional override) */
+}
+
+#connection-status-span .text-danger {
+    /* color: #b02a37 !important; */ /* Darker red (optional override) */
+}
+
+#connection-status-span .text-warning {
+    /* color: #997404 !important; */ /* Darker yellow (optional override) */
+}
+
+#connection-status-span .text-info {
+    /* color: #087990 !important; */ /* Darker info blue (optional override) */
+}
+
+#connection-status-span .text-muted {
+    color: #6c757d !important; /* Bootstrap's standard muted */
+}
+
+#connection-status-span i {
+    color: inherit !important;
+    vertical-align: middle; /* Align icon vertically within the line */
+    /* Adjust slightly if needed based on icon font */
+    /* position: relative; */
+    /* top: -1px; */
+}
+
+/* --- Terminal Specific Formatting --- */
+.terminal-timestamp {
+    color: var(--stale-color); /* Muted timestamp */
+    margin-right: 5px;
+    user-select: none;
+}
+
+.terminal-prompt { /* Style for '>' */
+    color: var(--accent-color);
+    user-select: none;
+    margin-right: 5px;
+}
+
+.terminal-response-prompt { /* Style for '<' */
+    color: var(--success-color); /* Green for results */
+    user-select: none;
+    margin-right: 5px;
+}
+
+.error-line .terminal-response-prompt { /* Style for '<' on errors */
+    color: var(--danger-color); /* Red for errors */
+}
+
+.result-line, .error-line {
+}
+
+/* NEW/Refined: Add a common class for terminal lines for consistent spacing if needed */
+.terminal-line {
+    display: block; /* Ensure each line takes full width */
+    line-height: 1.4; /* Adjust line spacing */
+    margin-bottom: 3px; /* *** ADD consistent bottom margin for spacing *** Adjust 3px as needed */
+}
+
+/* NEW: Styles for the colored prefixes */
+/* Bootstrap warning yellow */
+.prefix-tasked {
+    color: #ffc107;
+}
+/* Green */
+.prefix-response {
+    color: var(--success-color);
+}
+/* Red */
+.prefix-error {
+    color: var(--danger-color);
+}
+
+
+/* Add these styles, adjust as needed */
+.terminal-task-line {
+    color: var(--very-light-gray); /* Or a slightly different color */
+}
+
+.result-line {
+    color: var(--white); /* Dimmer color for normal output */
+    margin-top: 2px;
+}
+
+/* --- Context Menu Styling --- */
+.context-menu {
+    display: none; /* Hidden by default */
+    position: absolute; /* Position relative to viewport */
+    z-index: 1050; /* Above most other content */
+    background-color: var(--medium-gray);
+    border: 1px solid var(--light-gray);
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 5px 0;
+    min-width: 150px; /* Minimum width */
+    font-size: 0.9rem;
+}
+
+.context-menu-item {
+    display: block;
+    padding: 6px 15px;
+    color: var(--very-light-gray);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+    .context-menu-item:hover {
+        background-color: var(--accent-color);
+        color: #ffffff;
+    }
+
+    .context-menu-item i { /* Icon spacing */
+        margin-right: 8px;
+        width: 1.2em; /* Align icons */
+        text-align: center;
+    }
+
+.context-menu-divider {
+    height: 1px;
+    margin: 4px 1px;
+    overflow: hidden;
+    background-color: var(--light-gray);
+}
+
+/* --- Table ID Column Styling --- */
+/* Keep the base .implant-id rule for font style if you have it */
+.implant-id {
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.85em; /* Or keep your previous font style */
+}
+
+/* --- Table Process Column Styling --- */
+#implant-table th:nth-child(6), /* Target header */
+#implant-table td:nth-child(6) { /* Target cells (using class process-name is also fine) */
+    /* #implant-table td.process-name { */ /* Alternative selector */
+    min-width: 60px; /* Example: Ensure minimum width */
+    white-space: normal !important; /* ** Allow wrapping ** */
+    word-break: break-all; /* Break long names if they have no spaces */
+    vertical-align: middle !important;
+}
+
+#implant-table {
+
+}
+
+/* Add to wwwroot/css/site.css */
+.terminal-task-block {
+}
+/* The .pending-echo class is just a JS marker, no explicit style needed unless desired */
+
+/* Styling for the row being dragged */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #555 !important; /* Darker ghost */
+}
+
+/* Styling for the drag handle area (optional) */
+/* #implant-table-body tr { cursor: grab; } */ /* Make entire row grabbable */
+/* #implant-table-body tr:active { cursor: grabbing; } */
+
+/* The card containing the implant list */
+.implant-list-card {
+    /* No specific height/flex needed here if we fix the child */
+}
+
+    /* The direct parent (.card-body) of the table container */
+    .implant-list-card .card-body {
+        padding: 0 !important; /* Remove padding */
+        margin: 0 !important;
+        overflow: hidden !important; /* Prevent this parent from scrolling/expanding */
+        /* Do NOT set height or flex on the card-body itself */
+    }
+
+    /* The container that holds the table (.table-responsive) */
+    .implant-list-card .table-responsive {
+        width: 100%;
+        /* *** CORE FIX: Define BOTH height and min-height *** */
+        height: 200px; /* <-- ADJUST: Set desired height when populated */
+        min-height: 200px; /* <-- ADJUST: Force minimum height even when empty (Use same value) */
+        /* *************************************************** */
+        overflow-y: auto !important; /* Enable vertical scroll ONLY when needed */
+        overflow-x: hidden;
+        /* Optional: Visual separation if needed */
+        /* border-top: 1px solid var(--medium-gray); */
+        /* border-bottom: 1px solid var(--medium-gray); */
+    }
+
+    /* Optional: Ensure table itself doesn't have weird margins */
+    .implant-list-card .table {
+        margin-bottom: 0 !important;
+    }
+
+/* --- Interaction Tabs --- */
+.interaction-tabs {
+    background-color: var(--dark-alt); /* Match card bg */
+    border-bottom: 1px solid var(--medium-gray); /* Separator line */
+    flex-shrink: 0; /* Prevent tab bar from shrinking */
+}
+
+    .interaction-tabs .nav-item { /* Individual tab container */
+        margin-bottom: -1px; /* Overlap border */
+    }
+
+    .interaction-tabs .nav-link { /* Tab button itself */
+        color: var(--light-gray);
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-bottom: none; /* Remove bottom border initially */
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        padding: 0.3rem 0.6rem; /* Adjust padding */
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex; /* To align text and close button */
+        align-items: center;
+    }
+
+        .interaction-tabs .nav-link:hover {
+            color: var(--very-light-gray);
+            border-color: var(--medium-gray); /* Show border on hover */
+            border-bottom: none;
+        }
+
+        .interaction-tabs .nav-link.active { /* Active tab styling */
+            color: var(--very-light-gray);
+            background-color: var(--dark-gray); /* Slightly different background */
+            border-color: var(--medium-gray) var(--medium-gray) var(--dark-gray); /* Connect bottom border */
+            border-bottom-color: var(--dark-gray); /* Crucial to blend with content area */
+        }
+
+/* Tab Close Button */
+.tab-close-btn {
+    margin-left: 8px;
+    padding: 0 4px;
+    font-size: 0.9rem;
+    line-height: 1;
+    color: var(--light-gray);
+    background: none;
+    border: none;
+    border-radius: 50%; /* Make it round */
+    opacity: 0.6;
+    transition: opacity 0.15s, color 0.15s;
+}
+
+.nav-link:hover .tab-close-btn,
+.nav-link.active .tab-close-btn {
+    opacity: 1; /* Show clearly on hover/active */
+}
+
+.tab-close-btn:hover {
+    color: #ffffff;
+    background-color: var(--danger-color); /* Red background on hover */
+    opacity: 1;
+}
+
+/* --- Interaction Panes Container --- */
+/* Interaction Panes Container should fill remaining space */
+.interaction-panes-container {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden; /* Container itself doesn't scroll */
+    background-color: #1e1e1e; /* Can set BG here */
+    display: flex; /* Helps child fill */
+}
+
+/* Individual Interaction Pane Styling */
+.interaction-pane {
+    /* Visibility */
+    display: none; /* Hide by default */
+    /* Sizing */
+    height: 100%; /* Fill height of flex container */
+    width: 100%; /* Fill width */
+    box-sizing: border-box; /* Include padding in size */
+    /* Appearance (Copied from old .terminal-output) */
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.9em;
+    background-color: #1e1e1e; /* Ensure BG color */
+    color: var(--very-light-gray);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 8px;
+    /* CORE SCROLLING */
+    overflow-y: scroll !important;
+    overflow-x: hidden;
+}
+
+    .interaction-pane.active {
+        display: block; /* Show active pane */
+    }
+
+/* --- Check-in Popup --- */
+.checkin-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px; /* Adjust width as needed */
+    max-width: 90%;
+    background-color: var(--dark-alt); /* Use dark background */
+    color: var(--very-light-gray);
+    border: 1px solid var(--medium-gray);
+    border-radius: 0.375rem; /* Standard Bootstrap border radius */
+    z-index: 1060; /* High z-index to be on top */
+    font-size: 0.9rem;
+    opacity: 0; /* Start hidden for fade-in */
+    transform: translateX(100%); /* Start off-screen for slide-in */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Smooth transitions */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3); /* Add shadow */
+    /* cursor: pointer; */ /* Add if the whole popup is clickable */
+}
+
+    .checkin-popup .popup-header {
+        padding: 0.5rem 0.75rem;
+        background-color: var(--medium-gray); /* Slightly lighter header */
+        border-bottom: 1px solid var(--dark-gray);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top-left-radius: inherit; /* Match parent rounding */
+        border-top-right-radius: inherit;
+    }
+
+        .checkin-popup .popup-header strong {
+            font-weight: 500;
+        }
+
+    .checkin-popup .popup-body {
+        padding: 0.75rem;
+    }
+
+        .checkin-popup .popup-body div {
+            margin-bottom: 0.3rem; /* Spacing between lines */
+        }
+
+    /* Close button styling (copied from Bootstrap toast but adapted) */
+    .checkin-popup .btn-close {
+        background: transparent var(--bs-btn-close-bg) center/1em auto no-repeat; /* Standard BS close image */
+        border: 0;
+        border-radius: 0.25rem;
+        opacity: .7; /* Make it slightly less prominent */
+        padding: 0.25em;
+        filter: invert(1) grayscale(100%) brightness(200%); /* Make it white */
+        margin-left: 0.5rem; /* Space from title */
+        box-shadow: none; /* Remove default shadow */
+    }
+
+        .checkin-popup .btn-close:hover {
+            opacity: 1;
+            transform: none; /* Override any transform */
+            box-shadow: none;
+        }
+
+/* --- Sticky Table Header for Implant List --- */
+#implant-table thead th {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0; /* Stick to the top of the scrolling container */
+    z-index: 10; /* Ensure header stays above scrolling body rows */
+    /* Background color is already set via .table thead th,
+       but reinforcing it here ensures it stays solid */
+    background-color: var(--medium-gray);
+}
+
+/* Optional: Add a subtle bottom border to visually separate sticky header */
+#implant-table thead {
+    border-bottom: 2px solid var(--dark-gray); /* Already exists, ensure it's sufficient */
+}
+
+/* Ensure the container allows sticky positioning */
+.implant-list-card .table-responsive {
+    /* Ensure overflow properties are set (already done) */
+    overflow-y: auto !important;
+    /* height and min-height are already set */
+}
+
+/* --- File Manager Styling --- */
+.file-manager {
+    border: 1px solid var(--medium-gray); /* Optional border */
+    border-radius: 0.375rem;
+}
+
+.file-manager-nav {
+    /* Style for the path display and 'Up' button area */
+    font-size: 0.9rem;
+}
+
+    .file-manager-nav code {
+        color: var(--light-gray);
+        background-color: var(--dark-gray); /* Slightly different background for path */
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.2rem;
+    }
+
+/* Container for the file/dir list */
+.file-manager-list {
+    max-height: 400px; /* <<< ADJUSTABLE: Set a max height for scrolling */
+    overflow-y: auto;
+    border-top: 1px solid var(--medium-gray);
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+    /* Adjust table cells if needed */
+    .file-manager-list td, .file-manager-list th {
+        white-space: nowrap; /* Prevent wrapping by default */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis for overflow */
+    }
+
+        .file-manager-list td:nth-child(2), /* Name column */
+        .file-manager-list th:nth-child(2) {
+            /* Allow name to wrap if very long? Or keep ellipsis? */
+            /* white-space: normal; */
+        }
+
+    .file-manager-list a {
+        color: var(--very-light-gray); /* Make dir links clearer */
+        text-decoration: none;
+    }
+
+        .file-manager-list a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+.file-manager-upload {
+    /* Style for the upload form area at the bottom */
+    padding-top: 0.75rem;
+}
+
+    .file-manager-upload .form-label strong {
+        color: var(--accent-color); /* Highlight current path */
+    }
+
+/* Card containing the code viewer */
+#source-code-card {
+    /* h-100 d-flex flex-column already applied inline/via classes */
+}
+
+    /* Card body containing the pre block */
+    #source-code-card .card-body {
+        padding: 0 !important; /* Remove padding from body */
+        flex-grow: 1; /* Allow body to fill space between header/footer */
+        overflow-y: hidden; /* CRITICAL: Prevent body itself from scrolling */
+        display: flex; /* Make body flex so pre can fill it */
+    }
+
+        /* The <pre> block containing the code */
+        #source-code-card .card-body pre {
+            flex-grow: 1; /* Allow pre to fill the flex body */
+            margin: 0 !important; /* Remove default pre margin */
+            overflow-y: auto !important; /* <<<< ENABLE SCROLLING ON PRE BLOCK */
+            /* Set max-height to control explicit size if needed, */
+            /* but flex-grow + overflow on body should work dynamically with h-100 card */
+            /* max-height: 500px; */ /* Example fixed height if flex doesn't work as desired */
+        }
+
+            /* Highlight.js Code block styling */
+            #source-code-card .card-body pre code.hljs {
+                font-family: Consolas, 'Courier New', monospace;
+                font-size: 0.85em;
+                line-height: 1.5;
+                padding: 10px !important; /* Apply padding HERE */
+                /* Remove height/max-height from here - handled by <pre> or card body flex */
+                /* height: 100%; */
+                /* max-height: 600px; */
+                /* Remove overflow from here - handled by <pre> */
+                /* overflow-y: auto !important; */
+                background-color: #1e1e1e !important;
+                color: var(--very-light-gray) !important;
+                /* Rounded corners not needed if pre fills body without padding */
+                /* border-radius: 0 0 0.375rem 0.375rem; */
+            }
+
+            /* Scrollbar styling for the <pre> block */
+            #source-code-card .card-body pre::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            #source-code-card .card-body pre::-webkit-scrollbar-track {
+                background: var(--dark-alt);
+            }
+
+            #source-code-card .card-body pre::-webkit-scrollbar-thumb {
+                background-color: var(--medium-gray);
+                border-radius: 4px;
+                border: 2px solid var(--dark-alt);
+            }
+
+                #source-code-card .card-body pre::-webkit-scrollbar-thumb:hover {
+                    background-color: var(--light-gray);
+                }
+
+/* For Webkit browsers (Chrome, Safari, Edge, Opera, etc.) */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Hide the spinners */
+    margin: 0; /* Remove any margin spacing they might occupy */
+}
+
+/* For Firefox */
+input[type=number] {
+    -moz-appearance: textfield; /* Tell Firefox to render it like a text field (hides spinners) */
+}
